@@ -1,7 +1,7 @@
 typeof navigator === "object" && (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define('Plyr', factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Plyr = factory());
+  (global = global || self, global.Plyr = factory());
 }(this, (function () { 'use strict';
 
   // Polyfill for creating CustomEvents on IE9/10/11
@@ -269,7 +269,7 @@ typeof navigator === "object" && (function (global, factory) {
   (module.exports = function (key, value) {
     return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
   })('versions', []).push({
-    version: '3.6.5',
+    version: '3.6.4',
     mode:  'global',
     copyright: '© 2020 Denis Pushkarev (zloirock.ru)'
   });
@@ -3061,7 +3061,7 @@ typeof navigator === "object" && (function (global, factory) {
   var INVALID_PORT = 'Invalid port';
 
   var ALPHA = /[A-Za-z]/;
-  var ALPHANUMERIC = /[\d+-.A-Za-z]/;
+  var ALPHANUMERIC = /[\d+\-.A-Za-z]/;
   var DIGIT = /\d/;
   var HEX_START = /^(0x|0X)/;
   var OCT = /^[0-7]+$/;
@@ -4123,42 +4123,6 @@ typeof navigator === "object" && (function (global, factory) {
     return target;
   }
 
-  function _objectWithoutPropertiesLoose(source, excluded) {
-    if (source == null) return {};
-    var target = {};
-    var sourceKeys = Object.keys(source);
-    var key, i;
-
-    for (i = 0; i < sourceKeys.length; i++) {
-      key = sourceKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      target[key] = source[key];
-    }
-
-    return target;
-  }
-
-  function _objectWithoutProperties(source, excluded) {
-    if (source == null) return {};
-
-    var target = _objectWithoutPropertiesLoose(source, excluded);
-
-    var key, i;
-
-    if (Object.getOwnPropertySymbols) {
-      var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-      for (i = 0; i < sourceSymbolKeys.length; i++) {
-        key = sourceSymbolKeys[i];
-        if (excluded.indexOf(key) >= 0) continue;
-        if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-        target[key] = source[key];
-      }
-    }
-
-    return target;
-  }
-
   function _slicedToArray(arr, i) {
     return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
   }
@@ -4211,7 +4175,7 @@ typeof navigator === "object" && (function (global, factory) {
     if (typeof o === "string") return _arrayLikeToArray(o, minLen);
     var n = Object.prototype.toString.call(o).slice(8, -1);
     if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Map" || n === "Set") return Array.from(n);
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
   }
 
@@ -4408,7 +4372,7 @@ typeof navigator === "object" && (function (global, factory) {
     var checkIfURLSearchParamsSupported = function checkIfURLSearchParamsSupported() {
       try {
         var URLSearchParams = global.URLSearchParams;
-        return new URLSearchParams('?a=1').toString() === 'a=1' && typeof URLSearchParams.prototype.set === 'function' && typeof URLSearchParams.prototype.entries === 'function';
+        return new URLSearchParams('?a=1').toString() === 'a=1' && typeof URLSearchParams.prototype.set === 'function';
       } catch (e) {
         return false;
       }
@@ -4532,11 +4496,7 @@ typeof navigator === "object" && (function (global, factory) {
           anchorElement.href = anchorElement.href; // force href to refresh
         }
 
-        var inputElement = doc.createElement('input');
-        inputElement.type = 'url';
-        inputElement.value = url;
-
-        if (anchorElement.protocol === ':' || !/:/.test(anchorElement.href) || !inputElement.checkValidity() && !base) {
+        if (anchorElement.protocol === ':' || !/:/.test(anchorElement.href)) {
           throw new TypeError('Invalid URL');
         }
 
@@ -6048,13 +6008,7 @@ typeof navigator === "object" && (function (global, factory) {
       defer = functionBindContext(port.postMessage, port, 1);
     // Browsers with postMessage, skip WebWorkers
     // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-    } else if (
-      global_1.addEventListener &&
-      typeof postMessage == 'function' &&
-      !global_1.importScripts &&
-      !fails(post) &&
-      location.protocol !== 'file:'
-    ) {
+    } else if (global_1.addEventListener && typeof postMessage == 'function' && !global_1.importScripts && !fails(post)) {
       defer = post;
       global_1.addEventListener('message', listener, false);
     // IE8-
@@ -6663,7 +6617,7 @@ typeof navigator === "object" && (function (global, factory) {
   };
 
   var isPromise = function isPromise(input) {
-    return instanceOf$1(input, Promise) && isFunction$1(input.then);
+    return instanceOf$1(input, Promise);
   };
 
   var isEmpty$1 = function isEmpty(input) {
@@ -7055,16 +7009,14 @@ typeof navigator === "object" && (function (global, factory) {
   } // Element matches selector
 
   function matches$1(element, selector) {
-    var _Element = Element,
-        prototype = _Element.prototype;
 
     function match() {
       return Array.from(document.querySelectorAll(selector)).includes(this);
     }
 
-    var method = prototype.matches || prototype.webkitMatchesSelector || prototype.mozMatchesSelector || prototype.msMatchesSelector || match;
+    var method =  match;
     return method.call(element, selector);
-  } // Closest ancestor element matching selector (also tests element itself)
+  } // Find all elements
 
   function getElements(selector) {
     return this.elements.container.querySelectorAll(selector);
@@ -7305,7 +7257,7 @@ typeof navigator === "object" && (function (global, factory) {
 
     var event = new CustomEvent(type, {
       bubbles: bubbles,
-      detail: _objectSpread2(_objectSpread2({}, detail), {}, {
+      detail: _objectSpread2({}, detail, {
         plyr: this
       })
     }); // Dispatch the event
@@ -7332,19 +7284,6 @@ typeof navigator === "object" && (function (global, factory) {
     return new Promise(function (resolve) {
       return _this3.ready ? setTimeout(resolve, 0) : on.call(_this3, _this3.elements.container, 'ready', resolve);
     }).then(function () {});
-  }
-
-  /**
-   * Silence a Promise-like object.
-   * This is useful for avoiding non-harmful, but potentially confusing "uncaught
-   * play promise" rejection error messages.
-   * @param  {Object} value An object that may or may not be `Promise`-like.
-   */
-
-  function silencePromise(value) {
-    if (is$1.promise(value)) {
-      value.then(null, function () {});
-    }
   }
 
   function validateRatio(input) {
@@ -7415,8 +7354,8 @@ typeof navigator === "object" && (function (global, factory) {
     var padding = 100 / w * h;
     wrapper.style.paddingBottom = "".concat(padding, "%"); // For Vimeo we have an extra <div> to hide the standard controls and UI
 
-    if (this.isVimeo && !this.config.vimeo.premium && this.supported.ui) {
-      var height = 100 / this.media.offsetWidth * parseInt(window.getComputedStyle(this.media).paddingBottom, 10);
+    if (this.isVimeo && this.supported.ui) {
+      var height = 240;
       var offset = (height - padding) / (height / 50);
       this.media.style.transform = "translateY(-".concat(offset, "%)");
     } else if (this.isHTML5) {
@@ -7522,7 +7461,7 @@ typeof navigator === "object" && (function (global, factory) {
                 player.currentTime = currentTime; // Resume playing
 
                 if (!paused) {
-                  silencePromise(player.play());
+                  player.play();
                 }
               }); // Load new source
 
@@ -7686,19 +7625,19 @@ typeof navigator === "object" && (function (global, factory) {
     return (current / max * 100).toFixed(2);
   } // Replace all occurances of a string in a string
 
-  var replaceAll = function replaceAll() {
+  function replaceAll() {
     var input = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
     var find = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
     var replace = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
     return input.replace(new RegExp(find.toString().replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1'), 'g'), replace.toString());
-  }; // Convert to title case
+  } // Convert to title case
 
-  var toTitleCase = function toTitleCase() {
+  function toTitleCase() {
     var input = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
     return input.toString().replace(/\w\S*/g, function (text) {
       return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
     });
-  }; // Convert string to pascalCase
+  } // Convert string to pascalCase
 
   function toPascalCase() {
     var input = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
@@ -8068,7 +8007,7 @@ typeof navigator === "object" && (function (global, factory) {
 
       var icon = document.createElementNS(namespace, 'svg');
       setAttributes(icon, extend(attributes, {
-        'aria-hidden': 'true',
+        role: 'presentation',
         focusable: 'false'
       })); // Create the <use> to reference sprite
 
@@ -8092,7 +8031,7 @@ typeof navigator === "object" && (function (global, factory) {
       var attr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var text = i18n.get(key, this.config);
 
-      var attributes = _objectSpread2(_objectSpread2({}, attr), {}, {
+      var attributes = _objectSpread2({}, attr, {
         class: [attr.class, this.config.classNames.hidden].filter(Boolean).join(' ')
       });
 
@@ -8805,39 +8744,39 @@ typeof navigator === "object" && (function (global, factory) {
     // Set the looping options
 
     /* setLoopMenu() {
-          // Menu required
-          if (!is.element(this.elements.settings.panels.loop)) {
-              return;
-          }
-           const options = ['start', 'end', 'all', 'reset'];
-          const list = this.elements.settings.panels.loop.querySelector('[role="menu"]');
-           // Show the pane and tab
-          toggleHidden(this.elements.settings.buttons.loop, false);
-          toggleHidden(this.elements.settings.panels.loop, false);
-           // Toggle the pane and tab
-          const toggle = !is.empty(this.loop.options);
-          controls.toggleMenuButton.call(this, 'loop', toggle);
-           // Empty the menu
-          emptyElement(list);
-           options.forEach(option => {
-              const item = createElement('li');
-               const button = createElement(
-                  'button',
-                  extend(getAttributesFromSelector(this.config.selectors.buttons.loop), {
-                      type: 'button',
-                      class: this.config.classNames.control,
-                      'data-plyr-loop-action': option,
-                  }),
-                  i18n.get(option, this.config)
-              );
-               if (['start', 'end'].includes(option)) {
-                  const badge = controls.createBadge.call(this, '00:00');
-                  button.appendChild(badge);
-              }
-               item.appendChild(button);
-              list.appendChild(item);
-          });
-      }, */
+        // Menu required
+        if (!is.element(this.elements.settings.panels.loop)) {
+            return;
+        }
+         const options = ['start', 'end', 'all', 'reset'];
+        const list = this.elements.settings.panels.loop.querySelector('[role="menu"]');
+         // Show the pane and tab
+        toggleHidden(this.elements.settings.buttons.loop, false);
+        toggleHidden(this.elements.settings.panels.loop, false);
+         // Toggle the pane and tab
+        const toggle = !is.empty(this.loop.options);
+        controls.toggleMenuButton.call(this, 'loop', toggle);
+         // Empty the menu
+        emptyElement(list);
+         options.forEach(option => {
+            const item = createElement('li');
+             const button = createElement(
+                'button',
+                extend(getAttributesFromSelector(this.config.selectors.buttons.loop), {
+                    type: 'button',
+                    class: this.config.classNames.control,
+                    'data-plyr-loop-action': option,
+                }),
+                i18n.get(option, this.config)
+            );
+             if (['start', 'end'].includes(option)) {
+                const badge = controls.createBadge.call(this, '00:00');
+                button.appendChild(badge);
+            }
+             item.appendChild(button);
+            list.appendChild(item);
+        });
+    }, */
     // Get current selected caption language
     // TODO: rework this to user the getter in the API?
     // Set a list of available captions languages
@@ -9092,7 +9031,7 @@ typeof navigator === "object" && (function (global, factory) {
           showMenuPanel = controls.showMenuPanel;
       this.elements.controls = null; // Larger overlaid play button
 
-      if (is$1.array(this.config.controls) && this.config.controls.includes('play-large')) {
+      if (this.config.controls.includes('play-large')) {
         this.elements.container.appendChild(createButton.call(this, 'play-large'));
       } // Create the container
 
@@ -9104,7 +9043,7 @@ typeof navigator === "object" && (function (global, factory) {
         class: 'plyr__controls__item'
       }; // Loop through controls in order
 
-      dedupe(is$1.array(this.config.controls) ? this.config.controls : []).forEach(function (control) {
+      dedupe(this.config.controls).forEach(function (control) {
         // Restart button
         if (control === 'restart') {
           container.appendChild(createButton.call(_this10, 'restart', defaultAttributes));
@@ -9423,6 +9362,8 @@ typeof navigator === "object" && (function (global, factory) {
       if (update) {
         if (is$1.string(this.config.controls)) {
           container = replace(container);
+        } else if (is$1.element(container)) {
+          container.innerHTML = replace(container.innerHTML);
         }
       } // Controls container
 
@@ -9637,15 +9578,9 @@ typeof navigator === "object" && (function (global, factory) {
           meta.set(track, {
             default: track.mode === 'showing'
           }); // Turn off native caption rendering to avoid double captions
-          // Note: mode='hidden' forces a track to download. To ensure every track
-          // isn't downloaded at once, only 'showing' tracks should be reassigned
           // eslint-disable-next-line no-param-reassign
 
-          if (track.mode === 'showing') {
-            // eslint-disable-next-line no-param-reassign
-            track.mode = 'hidden';
-          } // Add event listener for cue changes
-
+          track.mode = 'hidden'; // Add event listener for cue changes
 
           on.call(_this, track, 'cuechange', function () {
             return captions.updateCues.call(_this);
@@ -9662,15 +9597,13 @@ typeof navigator === "object" && (function (global, factory) {
 
       toggleClass(this.elements.container, this.config.classNames.captions.enabled, !is$1.empty(tracks)); // Update available languages in list
 
-      if (is$1.array(this.config.controls) && this.config.controls.includes('settings') && this.config.settings.includes('captions')) {
+      if ((this.config.controls || []).includes('settings') && this.config.settings.includes('captions')) {
         controls.setCaptionsMenu.call(this);
       }
     },
     // Toggle captions display
     // Used internally for the toggleCaptions method, with the passive option forced to false
     toggle: function toggle(input) {
-      var _this2 = this;
-
       var passive = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
       // If there's no full support
@@ -9717,15 +9650,7 @@ typeof navigator === "object" && (function (global, factory) {
         controls.updateSetting.call(this, 'captions'); // Trigger event (not used internally)
 
         triggerEvent.call(this, this.media, active ? 'captionsenabled' : 'captionsdisabled');
-      } // Wait for the call stack to clear before setting mode='hidden'
-      // on the active track - forcing the browser to download it
-
-
-      setTimeout(function () {
-        if (active && _this2.captions.toggled) {
-          _this2.captions.currentTrackNode.mode = 'hidden';
-        }
-      });
+      }
     },
     // Set captions by track index
     // Used internally for the currentTrack setter with the passive option forced to false
@@ -9806,7 +9731,7 @@ typeof navigator === "object" && (function (global, factory) {
     // If update is false it will also ignore tracks without metadata
     // This is used to "freeze" the language options when captions.update is false
     getTracks: function getTracks() {
-      var _this3 = this;
+      var _this2 = this;
 
       var update = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
       // Handle media or textTracks missing or null
@@ -9814,20 +9739,20 @@ typeof navigator === "object" && (function (global, factory) {
       // Filter out removed tracks and tracks that aren't captions/subtitles (for example metadata)
 
       return tracks.filter(function (track) {
-        return !_this3.isHTML5 || update || _this3.captions.meta.has(track);
+        return !_this2.isHTML5 || update || _this2.captions.meta.has(track);
       }).filter(function (track) {
         return ['captions', 'subtitles'].includes(track.kind);
       });
     },
     // Match tracks based on languages and get the first
     findTrack: function findTrack(languages) {
-      var _this4 = this;
+      var _this3 = this;
 
       var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var tracks = captions.getTracks.call(this);
 
       var sortIsDefault = function sortIsDefault(track) {
-        return Number((_this4.captions.meta.get(track) || {}).default);
+        return Number((_this3.captions.meta.get(track) || {}).default);
       };
 
       var sorted = Array.from(tracks).sort(function (a, b) {
@@ -11057,7 +10982,7 @@ typeof navigator === "object" && (function (global, factory) {
             case 75:
               // Space and K key
               if (!repeat) {
-                silencePromise(player.togglePlay());
+                player.togglePlay();
               }
 
               break;
@@ -11171,17 +11096,15 @@ typeof navigator === "object" && (function (global, factory) {
         removeCurrent(); // Delay the adding of classname until the focus has changed
         // This event fires before the focusin event
 
-        if (event.type !== 'focusout') {
-          this.focusTimer = setTimeout(function () {
-            var focused = document.activeElement; // Ignore if current focus element isn't inside the player
+        this.focusTimer = setTimeout(function () {
+          var focused = document.activeElement; // Ignore if current focus element isn't inside the player
 
-            if (!elements.container.contains(focused)) {
-              return;
-            }
+          if (!elements.container.contains(focused)) {
+            return;
+          }
 
-            toggleClass(document.activeElement, player.config.classNames.tabFocus, true);
-          }, 10);
-        }
+          toggleClass(document.activeElement, player.config.classNames.tabFocus, true);
+        }, 10);
       } // Global window & document listeners
 
     }, {
@@ -11199,7 +11122,7 @@ typeof navigator === "object" && (function (global, factory) {
 
         once.call(player, document.body, 'touchstart', this.firstTouch); // Tab focus detection
 
-        toggleListener.call(player, document.body, 'keydown focus blur focusout', this.setTabFocus, toggle, false, true);
+        toggleListener.call(player, document.body, 'keydown focus blur', this.setTabFocus, toggle, false, true);
       } // Container listeners
 
     }, {
@@ -11242,7 +11165,7 @@ typeof navigator === "object" && (function (global, factory) {
         }); // Set a gutter for Vimeo
 
         var setGutter = function setGutter(ratio, padding, toggle) {
-          if (!player.isVimeo || player.config.vimeo.premium) {
+          if (!player.isVimeo) {
             return;
           }
 
@@ -11299,7 +11222,7 @@ typeof navigator === "object" && (function (global, factory) {
               ratio = _setPlayerSize.ratio; // Set Vimeo gutter
 
 
-          setGutter(ratio, padding, isEnter); // If not using native browser fullscreen API, we need to check for resizes of viewport
+          setGutter(ratio, padding, isEnter); // If not using native fullscreen, we need to check for resizes of viewport
 
           if (!usingNative) {
             if (isEnter) {
@@ -11377,13 +11300,9 @@ typeof navigator === "object" && (function (global, factory) {
             if (player.ended) {
               _this.proxy(event, player.restart, 'restart');
 
-              _this.proxy(event, function () {
-                silencePromise(player.play());
-              }, 'play');
+              _this.proxy(event, player.play, 'play');
             } else {
-              _this.proxy(event, function () {
-                silencePromise(player.togglePlay());
-              }, 'play');
+              _this.proxy(event, player.togglePlay, 'play');
             }
           });
         } // Disable right click
@@ -11481,9 +11400,7 @@ typeof navigator === "object" && (function (global, factory) {
 
         if (elements.buttons.play) {
           Array.from(elements.buttons.play).forEach(function (button) {
-            _this3.bind(button, 'click', function () {
-              silencePromise(player.togglePlay());
-            }, 'play');
+            _this3.bind(button, 'click', player.togglePlay, 'play');
           });
         } // Pause
 
@@ -11580,7 +11497,7 @@ typeof navigator === "object" && (function (global, factory) {
 
           if (play && done) {
             seek.removeAttribute(attribute);
-            silencePromise(player.play());
+            player.play();
           } else if (!done && player.playing) {
             seek.setAttribute(attribute, '');
             player.pause();
@@ -11678,18 +11595,7 @@ typeof navigator === "object" && (function (global, factory) {
 
         this.bind(elements.controls, 'mouseenter mouseleave', function (event) {
           elements.controls.hover = !player.touch && event.type === 'mouseenter';
-        }); // Also update controls.hover state for any non-player children of fullscreen element (as above)
-
-        if (elements.fullscreen) {
-          Array.from(elements.fullscreen.children).filter(function (c) {
-            return !c.contains(elements.container);
-          }).forEach(function (child) {
-            _this3.bind(child, 'mouseenter mouseleave', function (event) {
-              elements.controls.hover = !player.touch && event.type === 'mouseenter';
-            });
-          });
-        } // Update controls.pressed state (used for ui.toggleControls to avoid hiding when interacting)
-
+        }); // Update controls.pressed state (used for ui.toggleControls to avoid hiding when interacting)
 
         this.bind(elements.controls, 'mousedown mouseup touchstart touchend touchcancel', function (event) {
           elements.controls.pressed = ['mousedown', 'touchstart'].includes(event.type);
@@ -12158,28 +12064,15 @@ typeof navigator === "object" && (function (global, factory) {
       var _this = this;
 
       var player = this;
-      var config = player.config.vimeo;
+      var config = player.config.vimeo; // Get Vimeo params for the iframe
 
-      var premium = config.premium,
-          referrerPolicy = config.referrerPolicy,
-          frameParams = _objectWithoutProperties(config, ["premium", "referrerPolicy"]); // If the owner has a pro or premium account then we can hide controls etc
-
-
-      if (premium) {
-        Object.assign(frameParams, {
-          controls: false,
-          sidedock: false
-        });
-      } // Get Vimeo params for the iframe
-
-
-      var params = buildUrlParams(_objectSpread2({
+      var params = buildUrlParams(extend({}, {
         loop: player.config.loop.active,
         autoplay: player.autoplay,
         muted: player.muted,
         gesture: 'media',
         playsinline: !this.config.fullscreen.iosNative
-      }, frameParams)); // Get the source URL or ID
+      }, config)); // Get the source URL or ID
 
       var source = player.media.getAttribute('src'); // Get from <div> if needed
 
@@ -12193,27 +12086,22 @@ typeof navigator === "object" && (function (global, factory) {
       var src = format(player.config.urls.vimeo.iframe, id, params);
       iframe.setAttribute('src', src);
       iframe.setAttribute('allowfullscreen', '');
-      iframe.setAttribute('allow', 'autoplay,fullscreen,picture-in-picture'); // Set the referrer policy if required
+      iframe.setAttribute('allowtransparency', '');
+      iframe.setAttribute('allow', 'autoplay'); // Set the referrer policy if required
 
-      if (!is$1.empty(referrerPolicy)) {
-        iframe.setAttribute('referrerPolicy', referrerPolicy);
-      } // Inject the package
+      if (!is$1.empty(config.referrerPolicy)) {
+        iframe.setAttribute('referrerPolicy', config.referrerPolicy);
+      } // Get poster, if already set
 
 
-      var poster = player.poster;
+      var poster = player.poster; // Inject the package
 
-      if (premium) {
-        iframe.setAttribute('data-poster', poster);
-        player.media = replaceElement(iframe, player.media);
-      } else {
-        var wrapper = createElement('div', {
-          class: player.config.classNames.embedContainer,
-          'data-poster': poster
-        });
-        wrapper.appendChild(iframe);
-        player.media = replaceElement(wrapper, player.media);
-      } // Get poster image
-
+      var wrapper = createElement('div', {
+        poster: poster,
+        class: player.config.classNames.embedContainer
+      });
+      wrapper.appendChild(iframe);
+      player.media = replaceElement(wrapper, player.media); // Get poster image
 
       fetch(format(player.config.urls.vimeo.api, id), 'json').then(function (response) {
         if (is$1.empty(response)) {
@@ -12297,9 +12185,6 @@ typeof navigator === "object" && (function (global, factory) {
           player.embed.setPlaybackRate(input).then(function () {
             speed = input;
             triggerEvent.call(player, player.media, 'ratechange');
-          }).catch(function () {
-            // Cannot set Playback Rate, Video is probably not on Pro account
-            player.options.speed = [1];
           });
         }
       }); // Volume
@@ -12584,7 +12469,7 @@ typeof navigator === "object" && (function (global, factory) {
 
       var container = createElement('div', {
         id: id,
-        'data-poster': poster
+        poster: poster
       });
       player.media = replaceElement(container, player.media); // Id to poster wrapper
 
@@ -12902,12 +12787,14 @@ typeof navigator === "object" && (function (global, factory) {
           class: this.config.classNames.video
         }); // Wrap the video in a container
 
-        wrap$1(this.media, this.elements.wrapper); // Poster image container
+        wrap$1(this.media, this.elements.wrapper); // Faux poster container
 
-        this.elements.poster = createElement('div', {
-          class: this.config.classNames.poster
-        });
-        this.elements.wrapper.appendChild(this.elements.poster);
+        if (this.isEmbed) {
+          this.elements.poster = createElement('div', {
+            class: this.config.classNames.poster
+          });
+          this.elements.wrapper.appendChild(this.elements.poster);
+        }
       }
 
       if (this.isHTML5) {
@@ -13034,8 +12921,6 @@ typeof navigator === "object" && (function (global, factory) {
        * mobile devices, this initialization is done as the result of a user action.
        */
       value: function setupIMA() {
-        var _this4 = this;
-
         // Create the container for our advertisements
         this.elements.container = createElement('div', {
           class: this.player.config.classNames.ads
@@ -13048,16 +12933,7 @@ typeof navigator === "object" && (function (global, factory) {
 
         google.ima.settings.setDisableCustomPlaybackForIOS10Plus(this.player.config.playsinline); // We assume the adContainer is the video container of the plyr element that will house the ads
 
-        this.elements.displayContainer = new google.ima.AdDisplayContainer(this.elements.container, this.player.media); // Create ads loader
-
-        this.loader = new google.ima.AdsLoader(this.elements.displayContainer); // Listen and respond to ads loaded and error events
-
-        this.loader.addEventListener(google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED, function (event) {
-          return _this4.onAdsManagerLoaded(event);
-        }, false);
-        this.loader.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, function (error) {
-          return _this4.onAdError(error);
-        }, false); // Request video ads to be pre-loaded
+        this.elements.displayContainer = new google.ima.AdDisplayContainer(this.elements.container, this.player.media); // Request video ads to be pre-loaded
 
         this.requestAds();
       }
@@ -13068,10 +12944,21 @@ typeof navigator === "object" && (function (global, factory) {
     }, {
       key: "requestAds",
       value: function requestAds() {
+        var _this4 = this;
+
         var container = this.player.elements.container;
 
         try {
-          // Request video ads
+          // Create ads loader
+          this.loader = new google.ima.AdsLoader(this.elements.displayContainer); // Listen and respond to ads loaded and error events
+
+          this.loader.addEventListener(google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED, function (event) {
+            return _this4.onAdsManagerLoaded(event);
+          }, false);
+          this.loader.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, function (error) {
+            return _this4.onAdError(error);
+          }, false); // Request video ads
+
           var request = new google.ima.AdsRequest();
           request.adTagUrl = this.tagUrl; // Specify the linear and nonlinear slot sizes. This helps the SDK
           // to select the correct creative if multiple are returned
@@ -13250,13 +13137,7 @@ typeof navigator === "object" && (function (global, factory) {
             // };
             // TODO: So there is still this thing where a video should only be allowed to start
             // playing when the IMA SDK is ready or has failed
-            if (this.player.ended) {
-              this.loadAds();
-            } else {
-              // The SDK won't allow new ads to be called without receiving a contentComplete()
-              this.loader.contentComplete();
-            }
-
+            this.loadAds();
             break;
 
           case google.ima.AdEvent.Type.CONTENT_PAUSE_REQUESTED:
@@ -13392,7 +13273,7 @@ typeof navigator === "object" && (function (global, factory) {
 
         this.playing = false; // Play video
 
-        silencePromise(this.player.media.play());
+        this.player.media.play();
       }
       /**
        * Pause our video
@@ -13449,9 +13330,7 @@ typeof navigator === "object" && (function (global, factory) {
             _this11.on('loaded', resolve);
 
             _this11.player.debug.log(_this11.manager);
-          }); // Now that the manager has been destroyed set it to also be un-initialized
-
-          _this11.initialized = false; // Now request some new advertisements
+          }); // Now request some new advertisements
 
           _this11.requestAds();
         }).catch(function () {});
@@ -13746,10 +13625,15 @@ typeof navigator === "object" && (function (global, factory) {
 
           if (is$1.empty(src)) {
             throw new Error('Missing previewThumbnails.src config attribute');
-          } // Resolve promise
+          } // If string, convert into single-element list
 
 
-          var sortAndResolve = function sortAndResolve() {
+          var urls = is$1.string(src) ? [src] : src; // Loop through each src URL. Download and process the VTT file, storing the resulting data in this.thumbnails
+
+          var promises = urls.map(function (u) {
+            return _this2.getThumbnail(u);
+          });
+          Promise.all(promises).then(function () {
             // Sort smallest to biggest (e.g., [120p, 480p, 1080p])
             _this2.thumbnails.sort(function (x, y) {
               return x.height - y.height;
@@ -13758,25 +13642,7 @@ typeof navigator === "object" && (function (global, factory) {
             _this2.player.debug.log('Preview thumbnails', _this2.thumbnails);
 
             resolve();
-          }; // Via callback()
-
-
-          if (is$1.function(src)) {
-            src(function (thumbnails) {
-              _this2.thumbnails = thumbnails;
-              sortAndResolve();
-            });
-          } // VTT urls
-          else {
-              // If string, convert into single-element list
-              var urls = is$1.string(src) ? [src] : src; // Loop through each src URL. Download and process the VTT file, storing the resulting data in this.thumbnails
-
-              var promises = urls.map(function (u) {
-                return _this2.getThumbnail(u);
-              }); // Resolve
-
-              Promise.all(promises).then(sortAndResolve);
-            }
+          });
         });
       } // Process individual VTT file
 
@@ -14564,7 +14430,6 @@ typeof navigator === "object" && (function (global, factory) {
 
       this.elements = {
         container: null,
-        fullscreen: null,
         captions: null,
         buttons: {},
         display: {},
@@ -14739,10 +14604,8 @@ typeof navigator === "object" && (function (global, factory) {
           tabindex: 0
         });
         wrap$1(this.media, this.elements.container);
-      } // Migrate custom properties from media to container (so they work 😉)
+      } // Add style hook
 
-
-      ui.migrateStyles.call(this); // Add style hook
 
       ui.addStyleHook.call(this); // Setup media
 
@@ -14752,11 +14615,9 @@ typeof navigator === "object" && (function (global, factory) {
         on.call(this, this.elements.container, this.config.events.join(' '), function (event) {
           _this.debug.log("event: ".concat(event.type));
         });
-      } // Setup fullscreen
-
-
-      this.fullscreen = new Fullscreen(this); // Setup interface
+      } // Setup interface
       // If embed but not fully supported, build interface now to avoid flash of controls
+
 
       if (this.isHTML5 || this.isEmbed && !this.supported.ui) {
         ui.build.call(this);
@@ -14765,7 +14626,9 @@ typeof navigator === "object" && (function (global, factory) {
 
       this.listeners.container(); // Global listeners
 
-      this.listeners.global(); // Setup ads if provided
+      this.listeners.global(); // Setup fullscreen
+
+      this.fullscreen = new Fullscreen(this); // Setup ads if provided
 
       if (this.config.ads.enabled) {
         this.ads = new Ads(this);
@@ -14774,7 +14637,7 @@ typeof navigator === "object" && (function (global, factory) {
 
       if (this.isHTML5 && this.config.autoplay) {
         setTimeout(function () {
-          return silencePromise(_this.play());
+          return _this.play();
         }, 10);
       } // Seek time will be recorded (in listeners.js) so we can prevent hiding controls for a few seconds after seek
 
@@ -14811,7 +14674,7 @@ typeof navigator === "object" && (function (global, factory) {
           this.ads.managerPromise.then(function () {
             return _this2.ads.play();
           }).catch(function () {
-            return silencePromise(_this2.media.play());
+            return _this2.media.play();
           });
         } // Return the promise (for HTML5)
 
@@ -14971,7 +14834,7 @@ typeof navigator === "object" && (function (global, factory) {
 
           var hiding = toggleClass(this.elements.container, this.config.classNames.hideControls, force); // Close menu
 
-          if (hiding && is$1.array(this.config.controls) && this.config.controls.includes('settings') && !is$1.empty(this.config.settings)) {
+          if (hiding && this.config.controls.includes('settings') && !is$1.empty(this.config.settings)) {
             controls.toggleMenu.call(this, false);
           } // Trigger event on change
 
@@ -15503,41 +15366,41 @@ typeof navigator === "object" && (function (global, factory) {
         this.media.loop = toggle; // Set default to be a true toggle
 
         /* const type = ['start', 'end', 'all', 'none', 'toggle'].includes(input) ? input : 'toggle';
-             switch (type) {
-                case 'start':
-                    if (this.config.loop.end && this.config.loop.end <= this.currentTime) {
-                        this.config.loop.end = null;
-                    }
-                    this.config.loop.start = this.currentTime;
-                    // this.config.loop.indicator.start = this.elements.display.played.value;
-                    break;
-                 case 'end':
-                    if (this.config.loop.start >= this.currentTime) {
-                        return this;
-                    }
-                    this.config.loop.end = this.currentTime;
-                    // this.config.loop.indicator.end = this.elements.display.played.value;
-                    break;
-                 case 'all':
-                    this.config.loop.start = 0;
-                    this.config.loop.end = this.duration - 2;
-                    this.config.loop.indicator.start = 0;
-                    this.config.loop.indicator.end = 100;
-                    break;
-                 case 'toggle':
-                    if (this.config.loop.active) {
-                        this.config.loop.start = 0;
-                        this.config.loop.end = null;
-                    } else {
-                        this.config.loop.start = 0;
-                        this.config.loop.end = this.duration - 2;
-                    }
-                    break;
-                 default:
+         switch (type) {
+            case 'start':
+                if (this.config.loop.end && this.config.loop.end <= this.currentTime) {
+                    this.config.loop.end = null;
+                }
+                this.config.loop.start = this.currentTime;
+                // this.config.loop.indicator.start = this.elements.display.played.value;
+                break;
+             case 'end':
+                if (this.config.loop.start >= this.currentTime) {
+                    return this;
+                }
+                this.config.loop.end = this.currentTime;
+                // this.config.loop.indicator.end = this.elements.display.played.value;
+                break;
+             case 'all':
+                this.config.loop.start = 0;
+                this.config.loop.end = this.duration - 2;
+                this.config.loop.indicator.start = 0;
+                this.config.loop.indicator.end = 100;
+                break;
+             case 'toggle':
+                if (this.config.loop.active) {
                     this.config.loop.start = 0;
                     this.config.loop.end = null;
-                    break;
-            } */
+                } else {
+                    this.config.loop.start = 0;
+                    this.config.loop.end = this.duration - 2;
+                }
+                break;
+             default:
+                this.config.loop.start = 0;
+                this.config.loop.end = null;
+                break;
+        } */
       }
       /**
        * Get current loop state
@@ -15609,7 +15472,7 @@ typeof navigator === "object" && (function (global, factory) {
           return null;
         }
 
-        return this.media.getAttribute('poster') || this.media.getAttribute('data-poster');
+        return this.media.getAttribute('poster');
       }
       /**
        * Get the current aspect ratio in use
